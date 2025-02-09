@@ -1,0 +1,67 @@
+identity: # 工具的基本信息
+  name: tencent_cls # 工具名称，唯一，不允许和其他工具重名
+  author: zhiyuanzhu # 作者
+  label: # 标签，用于前端展示
+    en_US: Tencent CLS # 英文标签
+    zh_Hans: 腾讯云日志服务 # 中文标签
+description: # 描述，用于前端展示
+  human: # 用于前端展示的介绍，支持多语言
+    en_US: A tool for querying logs in Tencent Cloud Log Service. # 英文介绍
+    zh_Hans: 用于查询腾讯云日志服务中的日志。 # 中文介绍
+  llm: A tool for querying logs in Tencent Cloud Log Service. Input should be a query string. # 传递给LLM的介绍，同上，为了使得LLM更好理解这个工具，我们建议在这里写上关于这个工具尽可能详细的信息，让LLM能够理解这个工具
+parameters: # 参数列表
+  - name: topicid # 参数名称
+    type: string # 参数类型
+    required: true # 是否必填
+    label: # 参数标签
+      en_US: Log Topic Id # 英文标签
+      zh_Hans: 日志主题ID # 中文标签
+    human_description: # 用于前端展示的介绍，支持多语言
+      en_US: Log Topic Id
+      zh_Hans: 指定日志主题ID
+    llm_description: Log Topic Id, which is used to specify the log topic.
+    form: llm 
+  - name: query # 参数名称
+    type: string # 参数类型
+    required: true # 是否必填
+    label: # 参数标签
+      en_US: Query String # 英文标签
+      zh_Hans: 请求字符串 # 中文标签
+    human_description: # 用于前端展示的介绍，支持多语言
+      en_US: Query String
+      zh_Hans: 请求字符串
+    llm_description: Query string used for searching logs.
+    form: llm
+  - name: region # 参数名称
+    type: string # 参数类型
+    required: true # 是否必填
+    label: # 参数标签
+      en_US: region # 英文标签
+      zh_Hans: 地域 # 中文标签
+    human_description: # 用于前端展示的介绍，支持多语言
+      en_US: region
+      zh_Hans: 地域
+    llm_description: Region where the log service is located.
+    form: llm
+  - name: from # 参数名称
+    type: string # 参数类型
+    required: true # 是否必填
+    label: # 参数标签
+      en_US: start time # 英文标签
+      zh_Hans: 开始时间 # 中文标签
+    human_description: # 用于前端展示的介绍，支持多语言
+      en_US: start time, RFC3339 style
+      zh_Hans: 开始时间
+    llm_description: Start time of the query, in RFC3339 style.
+    form: llm
+  - name: to # 参数名称
+    type: string # 参数类型
+    required: true # 是否必填
+    label: # 参数标签
+      en_US: to # 英文标签
+      zh_Hans: 结束时间 # 中文标签
+    human_description: # 用于前端展示的介绍，支持多语言
+      en_US: end time,RFC3339 style
+      zh_Hans: 结束时间
+    llm_description: End time of the query, in RFC3339 style.
+    form: llm

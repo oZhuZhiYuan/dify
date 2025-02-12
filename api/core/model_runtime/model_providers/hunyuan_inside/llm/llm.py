@@ -198,24 +198,10 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
             logging.debug("_handle_stream_chat_response, event: %s", event)
 
             data_str = event["data"]
-            try:
-                data = json.loads(data_str)
-            except json.JSONDecodeError as e:
-                yield LLMResultChunk(
-                    model=model,
-                    prompt_messages=prompt_messages,
-                    delta=LLMResultChunkDelta(index=index,
-                                               message=AssistantPromptMessage(content=""), 
-                                               finish_reason="Non-JSON encountered.",
-                                            usage=self._calc_response_usage(
-                                                model=model,
-                                                credentials=credentials,
-                                                prompt_tokens=1000,
-                                                completion_tokens=1000,
-                                            ))
-                    )
-                break
-
+            if data_str.enddwith("[DONE]"):
+                continue
+            data = json.loads(data_str)
+            
             choices = data.get("choices", [])
             if not choices:
                 continue

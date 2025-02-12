@@ -357,13 +357,13 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
         tool_calls = []
         if response_tool_calls:
             for response_tool_call in response_tool_calls:
-                response_function = response_tool_call.get("Function", {})
+                response_function = response_tool_call.get("function", {})
                 function = AssistantPromptMessage.ToolCall.ToolCallFunction(
-                    name=response_function.get("Name", ""), arguments=response_function.get("Arguments", "")
+                    name=response_function.get("name", ""), arguments=response_function.get("arguments", "")
                 )
 
                 tool_call = AssistantPromptMessage.ToolCall(
-                    id=response_tool_call.get("Id", 0), type="function", function=function
+                    id=response_tool_call.get("id", 0), type="function", function=function
                 )
                 tool_calls.append(tool_call)
 

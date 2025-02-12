@@ -207,7 +207,12 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
                     delta=LLMResultChunkDelta(index=index,
                                                message=AssistantPromptMessage(content=""), 
                                                finish_reason="Non-JSON encountered.",
-                                                usage=usage)
+                                            usage=self._calc_response_usage(
+                                                model=model,
+                                                credentials=credentials,
+                                                prompt_tokens=1000,
+                                                completion_tokens=1000,
+                                            ))
                     )
                 break
 

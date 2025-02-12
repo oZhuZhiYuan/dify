@@ -89,7 +89,8 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
         # response = client.ChatCompletions(request)
 
         if stream:
-            return self._handle_stream_chat_response(model, credentials, prompt_messages, response)
+            return self._handle_stream_chat_response(model, credentials, prompt_messages, 
+                                                     self._process_response_sse(response))
 
         return self._handle_chat_response(credentials, model, prompt_messages, response)
 
@@ -365,3 +366,34 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
                 tool_calls.append(tool_call)
 
         return tool_calls
+
+    @staticmethod
+    def _process_response_sse(resp):
+       
+        e = {}
+
+        for line in resp.iter_lines():
+            if not line:
+                yield e
+                e = {}
+                continue
+
+            line = line.decode('utf-8')
+
+            # comment
+            if line[0] == ':':
+                continue
+
+            colon_idx = line.find(':')
+            key = line[:colon_idx]
+            val = line[colon_idx + 1:]
+            if key == 'data':
+                # The spec allows for multiple data fields per event, concatenated them with "\n".
+                if 'data' not in e:
+                    e['data'] = val
+                else:
+                    e['data'] += '\n' + val
+            elif key in ('event', 'id'):
+                e[key] = val
+            elif key == 'retry':
+                e[key] = int(val)

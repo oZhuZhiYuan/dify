@@ -198,6 +198,8 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
             logging.debug("_handle_stream_chat_response, event: %s", event)
 
             data_str = event["data"]
+            if data_str.endswith("[DONE]"):
+                break
             data = json.loads(data_str)
 
             choices = data.get("Choices", [])

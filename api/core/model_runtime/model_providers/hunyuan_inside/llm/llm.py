@@ -216,19 +216,19 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
                     )
                 break
 
-            choices = data.get("Choices", [])
+            choices = data.get("choices", [])
             if not choices:
                 continue
             choice = choices[0]
-            delta = choice.get("Delta", {})
-            message_content = delta.get("Content", "")
-            finish_reason = choice.get("FinishReason", "")
+            delta = choice.get("delta", {})
+            message_content = delta.get("content", "")
+            finish_reason = choice.get("finish_reason", "")
 
-            usage = data.get("Usage", {})
-            prompt_tokens = usage.get("PromptTokens", 0)
-            completion_tokens = usage.get("CompletionTokens", 0)
+            usage = data.get("usage", {})
+            prompt_tokens = usage.get("prompt_tokens", 0)
+            completion_tokens = usage.get("completion_tokens", 0)
 
-            response_tool_calls = delta.get("ToolCalls")
+            response_tool_calls = delta.get("tool_calls")
             if response_tool_calls is not None:
                 new_tool_calls = self._extract_response_tool_calls(response_tool_calls)
                 if len(new_tool_calls) > 0:
@@ -261,7 +261,7 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
 
                 delta_chunk = LLMResultChunkDelta(
                     index=index,
-                    role=delta.get("Role", "assistant"),
+                    role=delta.get("role", "assistant"),
                     message=assistant_prompt_message,
                     usage=usage,
                     finish_reason=finish_reason,

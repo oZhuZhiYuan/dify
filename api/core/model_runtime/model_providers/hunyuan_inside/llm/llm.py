@@ -198,9 +198,18 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
             logging.debug("_handle_stream_chat_response, event: %s", event)
 
             data_str = event["data"]
-            if data_str.endswith("[DONE]"):
+            try:
+                data = json.loads(data_str)
+            except json.JSONDecodeError as e:
+                yield LLMResultChunk(
+                    model=model,
+                    prompt_messages=prompt_messages,
+                    delta=LLMResultChunkDelta(index=index,
+                                               message=AssistantPromptMessage(content=""), 
+                                               finish_reason="Non-JSON encountered.",
+                                                usage=usage)
+                    )
                 break
-            data = json.loads(data_str)
 
             choices = data.get("Choices", [])
             if not choices:
@@ -399,3 +408,31 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
                 e[key] = val
             elif key == 'retry':
                 e[key] = int(val)
+
+    def _create_final_llm_result_chunk(
+        self,
+        index: int,
+        message: AssistantPromptMessage,
+        finish_reason: str,
+        usage: dict,
+        model: str,
+        prompt_messages: list[PromptMessage],
+        credentials: dict,
+        full_content: str,
+    ) -> LLMResultChunk:
+        # calculate num tokens
+        prompt_tokens = usage and usage.get("prompt_tokens")
+        if prompt_tokens is None:
+            prompt_tokens = self.get_num_tokens(text=prompt_messages[0].content)
+        completion_tokens = usage and usage.get("completion_tokens")
+        if completion_tokens is None:
+            completion_tokens = self.get_num_tokens(text=full_content)
+
+        # transform usage
+        usage = self._calc_response_usage(model, credentials, prompt_tokens, completion_tokens)
+
+        return LLMResultChunk(
+            model=model,
+            prompt_messages=prompt_messages,
+            delta=LLMResultChunkDelta(index=index, message=message, finish_reason=finish_reason, usage=usage),
+        )

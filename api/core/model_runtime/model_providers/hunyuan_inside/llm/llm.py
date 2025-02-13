@@ -92,7 +92,7 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
             return self._handle_stream_chat_response(model, credentials, prompt_messages, 
                                                      self._process_response_sse(response))
 
-        return self._handle_chat_response(credentials, model, prompt_messages, response.json)
+        return self._handle_chat_response(credentials, model, prompt_messages, response.json())
 
     def validate_credentials(self, model: str, credentials: dict) -> None:
         """

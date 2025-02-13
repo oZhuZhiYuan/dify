@@ -92,7 +92,7 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
             return self._handle_stream_chat_response(model, credentials, prompt_messages, 
                                                      self._process_response_sse(response))
 
-        return self._handle_chat_response(credentials, model, prompt_messages, response)
+        return self._handle_chat_response(credentials, model, prompt_messages, response.json)
 
     def validate_credentials(self, model: str, credentials: dict) -> None:
         """
@@ -269,10 +269,10 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
 
     def _handle_chat_response(self, credentials, model, prompt_messages, response):
         usage = self._calc_response_usage(
-            model, credentials, response.Usage.PromptTokens, response.Usage.CompletionTokens
+            model, credentials, response.usage.prompt_tokens, response.usage.completion_tokens
         )
         assistant_prompt_message = AssistantPromptMessage()
-        assistant_prompt_message.content = response.Choices[0].Message.Content
+        assistant_prompt_message.content = response.choices[0].message.content
         result = LLMResult(
             model=model,
             prompt_messages=prompt_messages,

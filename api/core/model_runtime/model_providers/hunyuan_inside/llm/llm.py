@@ -269,10 +269,10 @@ class HunyuanLargeLanguageModel(LargeLanguageModel):
 
     def _handle_chat_response(self, credentials, model, prompt_messages, response):
         usage = self._calc_response_usage(
-            model, credentials, response.usage.prompt_tokens, response.usage.completion_tokens
+            model, credentials, response["usage"]["prompt_tokens"], response["usage"]["completion_tokens"]
         )
         assistant_prompt_message = AssistantPromptMessage()
-        assistant_prompt_message.content = response.choices[0].message.content
+        assistant_prompt_message.content = response['choices'][0]['message']['content']
         result = LLMResult(
             model=model,
             prompt_messages=prompt_messages,
